@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Vehicle;
 use App\Models\Vendor;
 use App\Traits\FirebaseAuthTrait;
+use App\Rules\HondurasPhoneNumber;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -248,12 +249,19 @@ class AuthController extends Controller
     public function register(Request $request)
     {
 
+        // Check if customer registration is enabled
+        if (!setting('customersCanRegister', false)) {
+            return response()->json([
+                "message" => __("Customer registration is currently disabled. Please contact support for assistance."),
+            ], 403);
+        }
+
         $validator = Validator::make(
             $request->all(),
             [
                 'name' => 'required|string',
                 'email' => 'required|email|unique:users',
-                'phone' => 'phone:' . setting('countryCode', "GH") . '|unique:users',
+                'phone' => ['required', new HondurasPhoneNumber, 'unique:users'],
                 'password' => 'required',
             ],
             $messages = [
@@ -333,7 +341,7 @@ class AuthController extends Controller
             [
                 'name' => 'sometimes|string',
                 'email' => 'sometimes|email|unique:users,email,' . Auth::id(),
-                'phone' => 'phone:' . setting('countryCode', "GH") . '|unique:users,phone,' . Auth::id(),
+                'phone' => ['sometimes', new HondurasPhoneNumber, 'unique:users,phone,' . Auth::id()],
                 'photo' => 'sometimes|nullable|image|max:2048',
             ],
             $messages = [

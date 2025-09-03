@@ -13,6 +13,8 @@ class Coupon extends BaseModel
 
     protected $casts = [
         'for_delivery' => 'boolean',
+        'for_new_users_only' => 'boolean',
+        'for_zero_waste_module' => 'boolean',
     ];
 
     public function getFormattedExpiresOnAttribute()

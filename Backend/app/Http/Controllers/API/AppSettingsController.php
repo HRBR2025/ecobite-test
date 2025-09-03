@@ -49,6 +49,7 @@ class AppSettingsController extends Controller
                 "enableDriverWallet" => setting('enableDriverWallet', "0"),
                 "enableGroceryMode" => setting('enableGroceryMode', "0"),
                 "partnersCanRegister" => setting('partnersCanRegister', 0),
+                "customersCanRegister" => setting('customersCanRegister', 0),
                 "enableReferSystem" => setting('enableReferSystem', "0"),
                 "referAmount" => setting('referRewardAmount', "0"),
                 "enableChat" => setting('enableChat', "1"),

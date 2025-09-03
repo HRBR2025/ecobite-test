@@ -15,12 +15,15 @@ class UserObserver
 
     public function creating(User $user)
     {
-        //
-        $user->code = \Str::random(3) . "" . $user->id . "" . \Str::random(2);
+        // Referral code will be generated after the user is created
     }
 
     public function created(User $user)
     {
+        // Generate unique referral code
+        $user->code = \Str::random(3) . "" . $user->id . "" . \Str::random(2);
+        $user->saveQuietly();
+        
         //update wallet
         if (empty($user->wallet)) {
             $user->createWallet(0);

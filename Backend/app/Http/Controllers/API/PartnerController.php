@@ -11,6 +11,7 @@ use App\Models\VehicleType;
 use App\Models\Vehicle;
 use App\Models\DriverType;
 use App\Traits\ReferralTrait;
+use App\Rules\HondurasPhoneNumber;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -26,15 +27,22 @@ class PartnerController extends Controller
     public function vendor(Request $request)
     {
 
+        // Check if partner registration is enabled
+        if (!setting('partnersCanRegister', false)) {
+            return response()->json([
+                "message" => __("Partner registration is currently disabled. Please contact support for assistance."),
+            ], 403);
+        }
+
         $validator = Validator::make(
             $request->all(),
             [
-                'phone' => 'required|' . 'phone:' . setting('countryCode', "GH") . '|unique:users',
+                'phone' => ['required', new HondurasPhoneNumber, 'unique:users'],
                 'email' => 'required|email|unique:users',
                 'name' => 'required',
                 'password' => 'required',
                 'vendor_email' => 'required|email|unique:vendors,email',
-                'vendor_phone' => 'required|' . 'phone:' . setting('countryCode', "GH") . '|unique:vendors,phone',
+                'vendor_phone' => ['required', new HondurasPhoneNumber, 'unique:vendors,phone'],
                 'vendor_name' => 'required',
                 'vendor_type_id' => 'required|exists:vendor_types,id',
                 'address' => 'required',
@@ -132,10 +140,17 @@ class PartnerController extends Controller
     public function driver(Request $request)
     {
 
+        // Check if partner registration is enabled
+        if (!setting('partnersCanRegister', false)) {
+            return response()->json([
+                "message" => __("Partner registration is currently disabled. Please contact support for assistance."),
+            ], 403);
+        }
+
         $validator = Validator::make(
             $request->all(),
             [
-                'phone' => 'required|' . 'phone:' . setting('countryCode', "GH") . '|unique:users',
+                'phone' => ['required', new HondurasPhoneNumber, 'unique:users'],
                 'email' => 'required|email|unique:users',
                 'name' => 'required',
                 'password' => 'required',
